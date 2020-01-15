@@ -12,7 +12,7 @@ venv
 **/project_settings.json
 **/celerybeat*
 .env
-__pycache__/
+**/__pycache__/
 app/static/images/*
 !app/static/images/stake_house/
 app/static/images/stake_house/*
