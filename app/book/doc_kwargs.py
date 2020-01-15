@@ -1,23 +1,12 @@
 
-from .schemas import BookSchema
+from .schemas import CreatedOrderResponse
 from starlette.status import HTTP_201_CREATED
 
-doc_create_book = dict(
-    response_model=BookSchema,
-    description='Create book with name and description',
-    summary='Create Book',
+doc_create_order = dict(
+    response_model=CreatedOrderResponse,
+    description='Create Order!',
+    summary='Create Order!!!',
     status_code=HTTP_201_CREATED,
-    response_description='Book is created!',
+    response_description='Order is created!',
 )
 
-doc_get_book = dict(
-    response_model=BookSchema
-)
-
-doc_update_book = dict(
-
-)
-
-doc_delete_book = dict(
-
-)
