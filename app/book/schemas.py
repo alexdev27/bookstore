@@ -21,7 +21,7 @@ from fastapi import HTTPException
 from bson import ObjectId
 
 
-from typing import Dict
+from typing import Dict, Union, List
 from datetime import datetime
 
 
@@ -29,6 +29,12 @@ class BookSchema(BaseModel):
     name: str = Field(..., title='Название книги')
     description: str = Field(..., title='Описание книги')
 
+    # @validator('name')
+    # def val_name(cls, v):
+    #     from .views import raise_http_exception, AppException
+    #     raise AppException(data='Oops!', s_code=400)
+        # raise_http_exception('wrong', 400)
+        # raise HTTPException(400, 'Someting went wrong!')
 
 class BookSchemaRequest(BookSchema):
     pass
@@ -93,3 +99,8 @@ class BookSchemaResponse(BookSchema):
 #     order_time: datetime = Field(..., title='Время созданного заказа')
 #     pay_type: PaymentTypeEnum = Field(..., title='Тип оплаты (наличка или безналичка)')
 #     doc_type: DocumentTypesEnum = Field(..., title='Тип документа (Оплата или Возврат)')
+
+
+class InternalAppErrorResponse(BaseModel):
+    error: bool = Field(True, title='Что-то пошло не так. Например, не найден ID сущности в базе')
+    errors: List[str] = Field(..., title='Описание ошибок')

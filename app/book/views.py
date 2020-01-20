@@ -1,10 +1,11 @@
 
 from .doc_kwargs import doc_create_book
-from .schemas import BookSchemaResponse, BookSchemaRequest
+from .schemas import BookSchemaResponse, BookSchemaRequest, InternalAppErrorResponse
 from app import app
 from fastapi import HTTPException
+from starlette.requests import Request
 
-from pprint import  pprint as pp
+from pprint import pprint as pp
 base_route = '/books'
 
 
@@ -20,10 +21,27 @@ from starlette.responses import JSONResponse
 
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from typing import List, Union, Dict
 
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request, exc: HTTPException):
-    return JSONResponse(exc.detail, status_code=exc.status_code)
+from typing import Union
+
+
+class AppException(Exception):
+    def __init__(self, data: Union[List[str], str], s_code: int = 400):
+        self.status_code = s_code
+        self.data: Dict[str, Union[List[str], str]] = InternalAppErrorResponse(data=data).dict()
+
+
+def handle_err(req: Request, exc: AppException):
+    return JSONResponse(content=exc.data, status_code=exc.status_code)
+
+
+app.add_exception_handler(AppException, handle_err)
+
+
+# @app.exception_handler(StarletteHTTPException)
+# async def http_exception_handler(request, exc: HTTPException):
+#     return JSONResponse(exc.detail, status_code=exc.status_code)
 
 
 # @app.exception_handler(RequestValidationError)
@@ -38,14 +56,11 @@ async def http_exception_handler(request, exc: HTTPException):
 #     return JSONResponse(failure(formatted_err_list), status_code=400)
 
 
+
 @app.post(_url(), **doc_create_book)
 async def create_book(book: BookSchemaRequest):
     b = {**book.dict()}
-    pp(b)
-    b['a'] = 1
-    b['ac'] = 2
-    b['av'] = 4
-    pp(b)
+    # raise AppException(data='OOPs!', s_code=400)
     return BookSchemaResponse(**b)
 
 
